@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User List</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/webjars/bootstrap/5.2.1/css/bootstrap.min.css">
+    <style>
+        /* Style for h2 */
+        h2 {
+            color: blue;
+            font-size: 24px;
+            animation: fadeIn 1s ease-in-out;
+        }
+        /* Style for form */
+        form {
+            margin-bottom: 20px;
+            animation: slideInFromTop 1s ease-in-out;
+        }
+        /* Style for input */
+        input[type="text"] {
+            width: 200px;
+            padding: 5px;
+            border: 1px solid #ccc;
+        }
+        /* Style for button */
+        button[type="submit"] {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        /* Style for table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            animation: fadeIn 1s ease-in-out;
+        }
+        /* Style for table th */
+        th {
+            background-color: #f2f2f2;
+            text-align: left;
+            padding: 8px;
+        }
+        /* Style for table td */
+        td {
+            padding: 8px;
+        }
+        /* Style for pagination */
+        .pagination {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            animation: slideInFromBottom 1s ease-in-out;
+        }
+        /* Style for pagination li */
+        .pagination li {
+            margin-right: 5px;
+        }
+        /* Style for pagination link */
+        .pagination a {
+            color: #007bff;
+            text-decoration: none;
+            padding: 5px 10px;
+            border: 1px solid #007bff;
+            border-radius: 3px;
+        }
+        /* Style for disabled pagination link */
+        .pagination .disabled a {
+            pointer-events: none;
+            background-color: #f2f2f2;
+            color: #6c757d;
+            border-color: #f2f2f2;
+        }
+        /* Animation keyframes */
+        @keyframes slideInFromTop {
+            0% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes slideInFromBottom {
+            0% {
+                transform: translateY(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body style="overflow-x: hidden;">
+<div class="container" style="position: relative;">
+    <div class="parallax" style="background-image: url('me.jpg'); height: 500px; background-attachment: fixed; background-position: center; background-repeat: no-repeat; background-size: cover;"></div>
+    <h2>User List</h2>
+    <form th:action="@{/}" method="get">
+        <input type="text" name="keyword" placeholder="Search by name or email" th:value="${keyword}" style="width: 300px;">
+        <button type="submit" style="background-color: #28a745;">Search</button>
+    </form>
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Results</th>
+            <th><a th:href="@{/?(sortField='name',sortOrder=${sortField=='name' && sortOrder=='asc'?'desc':'asc'})}" style="color: #dc3545;">Name</a></th>
+            <th><a th:href="@{/?(sortField='email',sortOrder=${sortField=='email' && sortOrder=='asc'?'desc':'asc'})}" style="color: #dc3545;">Email</a></th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user, iterStat : ${users.content}">
+            <td th:text="${iterStat.index + 1 + (currentPage * totalPages)}" style="font-weight: bold;"></td>
+            <td th:text="${user.name}" style="color: #6c757d;"></td>
+            <td th:text="${user.email}" style="color: #6c757d;"></td>
+        </tr>
+        </tbody>
+    </table>
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <li class="page-item" th:classappend="${currentPage == 0} ? disabled">
+                <a class="page-link" th:href="@{/?(page=${currentPage-1},sortField=${sortField},sortOrder=${sortOrder})}" style="background-color: #17a2b8;">Previous</a>
+            </li>
+            <li class="page-item" th:classappend="${currentPage+1 >= totalPages} ? disabled">
+                <a class="page-link" th:href="@{/?(page=${currentPage+1},sortField=${sortField},sortOrder=${sortOrder})}" style="background-color: #17a2b8;">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+<script>
+    window.addEventListener('scroll', function() {
+        const parallax = document.querySelector('.parallax');
+        let scrollPosition = window.pageYOffset;
+        parallax.style.transform = 'translateY(' + scrollPosition * 0.5 + 'px)';
+    })
+</script>
+</body>
+</html>
